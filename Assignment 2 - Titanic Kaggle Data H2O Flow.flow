@@ -1,0 +1,105 @@
+{
+  "version": "1.0.0",
+  "cells": [
+    {
+      "type": "cs",
+      "input": "assist"
+    },
+    {
+      "type": "cs",
+      "input": "importFiles"
+    },
+    {
+      "type": "cs",
+      "input": "importFiles [ \"../../Documents/3250FDS/titanic_data.csv\" ]"
+    },
+    {
+      "type": "cs",
+      "input": "setupParse source_frames: [ \"nfs://Users/aliennationrefugeee/Desktop/h2o-3.18.0.1/../../Documents/3250FDS/titanic_data.csv\" ]"
+    },
+    {
+      "type": "cs",
+      "input": "parseFiles\n  source_frames: [\"nfs://Users/aliennationrefugeee/Desktop/h2o-3.18.0.1/../../Documents/3250FDS/titanic_data.csv\"]\n  destination_frame: \"titanic_data.hex\"\n  parse_type: \"CSV\"\n  separator: 44\n  number_columns: 12\n  single_quotes: false\n  column_names: [\"PassengerId\",\"Survived\",\"Pclass\",\"Name\",\"Sex\",\"Age\",\"SibSp\",\"Parch\",\"Ticket\",\"Fare\",\"Cabin\",\"Embarked\"]\n  column_types: [\"Numeric\",\"Enum\",\"Enum\",\"String\",\"Enum\",\"Numeric\",\"Enum\",\"Enum\",\"Numeric\",\"Numeric\",\"Enum\",\"Enum\"]\n  delete_on_done: true\n  check_header: 1\n  chunk_size: 4194304"
+    },
+    {
+      "type": "cs",
+      "input": "getFrameSummary \"titanic_data.hex\""
+    },
+    {
+      "type": "cs",
+      "input": "assist splitFrame, \"titanic_data.hex\""
+    },
+    {
+      "type": "cs",
+      "input": "splitFrame \"titanic_data.hex\", [0.7,0.2], [\"titanic_data.hex_0.70_train\",\"titanic_data.hex_0.20_validate\",\"titanic_data.hex_0.10_test\"], 604747"
+    },
+    {
+      "type": "cs",
+      "input": "buildModel \"drf\""
+    },
+    {
+      "type": "cs",
+      "input": "buildModel 'drf', {\"model_id\":\"drf-dd953095-307e-4019-bc6b-22263ffcabdc\",\"training_frame\":\"titanic_data.hex_0.70_train\",\"validation_frame\":\"titanic_data.hex_0.20_validate\",\"nfolds\":0,\"response_column\":\"Survived\",\"ignored_columns\":[\"PassengerId\",\"Name\",\"Ticket\",\"Cabin\"],\"ignore_const_cols\":true,\"ntrees\":50,\"max_depth\":20,\"min_rows\":1,\"nbins\":20,\"seed\":-1,\"mtries\":-1,\"sample_rate\":0.6320000290870667,\"score_each_iteration\":false,\"score_tree_interval\":0,\"balance_classes\":false,\"nbins_top_level\":1024,\"nbins_cats\":1024,\"r2_stopping\":1.7976931348623157e+308,\"stopping_rounds\":0,\"stopping_metric\":\"AUTO\",\"stopping_tolerance\":0.001,\"max_runtime_secs\":0,\"checkpoint\":\"\",\"col_sample_rate_per_tree\":1,\"min_split_improvement\":0.00001,\"histogram_type\":\"AUTO\",\"categorical_encoding\":\"AUTO\",\"custom_metric_func\":\"\",\"build_tree_one_node\":false,\"sample_rate_per_class\":[],\"binomial_double_trees\":false,\"col_sample_rate_change_per_level\":1,\"calibrate_model\":false}"
+    },
+    {
+      "type": "cs",
+      "input": "getModel \"drf-dd953095-307e-4019-bc6b-22263ffcabdc\""
+    },
+    {
+      "type": "cs",
+      "input": "predict"
+    },
+    {
+      "type": "cs",
+      "input": "predict model: \"drf-dd953095-307e-4019-bc6b-22263ffcabdc\", frame: \"titanic_data.hex_0.10_test\", predictions_frame: \"prediction-124a9c97-bacd-4bd2-9536-c31c86a8b3d9\""
+    },
+    {
+      "type": "cs",
+      "input": "bindFrames \"combined-prediction-124a9c97-bacd-4bd2-9536-c31c86a8b3d9\", [ \"prediction-124a9c97-bacd-4bd2-9536-c31c86a8b3d9\", \"titanic_data.hex_0.10_test\" ]"
+    },
+    {
+      "type": "cs",
+      "input": "getFrameSummary \"combined-prediction-124a9c97-bacd-4bd2-9536-c31c86a8b3d9\""
+    },
+    {
+      "type": "cs",
+      "input": "getFrameData \"combined-prediction-124a9c97-bacd-4bd2-9536-c31c86a8b3d9\""
+    },
+    {
+      "type": "cs",
+      "input": ""
+    },
+    {
+      "type": "cs",
+      "input": "buildModel \"gbm\""
+    },
+    {
+      "type": "cs",
+      "input": "buildModel 'gbm', {\"model_id\":\"gbm-43847652-9ab9-4da3-9114-434d49ed69c3\",\"training_frame\":\"titanic_data.hex_0.70_train\",\"validation_frame\":\"titanic_data.hex_0.20_validate\",\"nfolds\":0,\"response_column\":\"Survived\",\"ignored_columns\":[\"PassengerId\",\"Name\",\"Ticket\",\"Cabin\"],\"ignore_const_cols\":true,\"ntrees\":50,\"max_depth\":5,\"min_rows\":10,\"nbins\":20,\"seed\":-1,\"learn_rate\":0.1,\"sample_rate\":1,\"col_sample_rate\":1,\"score_each_iteration\":false,\"score_tree_interval\":0,\"balance_classes\":false,\"nbins_top_level\":1024,\"nbins_cats\":1024,\"r2_stopping\":1.7976931348623157e+308,\"stopping_rounds\":0,\"stopping_metric\":\"AUTO\",\"stopping_tolerance\":0.001,\"max_runtime_secs\":0,\"learn_rate_annealing\":1,\"distribution\":\"AUTO\",\"huber_alpha\":0.9,\"checkpoint\":\"\",\"col_sample_rate_per_tree\":1,\"min_split_improvement\":0.00001,\"histogram_type\":\"AUTO\",\"categorical_encoding\":\"AUTO\",\"custom_metric_func\":\"\",\"build_tree_one_node\":false,\"sample_rate_per_class\":[],\"col_sample_rate_change_per_level\":1,\"max_abs_leafnode_pred\":1.7976931348623157e+308,\"pred_noise_bandwidth\":0,\"calibrate_model\":false}"
+    },
+    {
+      "type": "cs",
+      "input": "getModel \"gbm-43847652-9ab9-4da3-9114-434d49ed69c3\""
+    },
+    {
+      "type": "cs",
+      "input": "predict model: \"gbm-43847652-9ab9-4da3-9114-434d49ed69c3\""
+    },
+    {
+      "type": "cs",
+      "input": "predict model: \"gbm-43847652-9ab9-4da3-9114-434d49ed69c3\", frame: \"titanic_data.hex_0.10_test\", predictions_frame: \"prediction-b2dfdcf1-2e67-4757-b4c6-2f750123d97e\""
+    },
+    {
+      "type": "cs",
+      "input": "bindFrames \"combined-prediction-b2dfdcf1-2e67-4757-b4c6-2f750123d97e\", [ \"prediction-b2dfdcf1-2e67-4757-b4c6-2f750123d97e\", \"titanic_data.hex_0.10_test\" ]"
+    },
+    {
+      "type": "cs",
+      "input": "getFrameSummary \"combined-prediction-b2dfdcf1-2e67-4757-b4c6-2f750123d97e\""
+    },
+    {
+      "type": "cs",
+      "input": "getFrameData \"combined-prediction-b2dfdcf1-2e67-4757-b4c6-2f750123d97e\""
+    }
+  ]
+}
